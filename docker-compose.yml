@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ip-checker-frontend
+    build:
+      context: ./ipchecker-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    depends_on:
+      - proxy
+
+  proxy:
+    image: ip-checker-proxy
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - ipchecker-task1
+      - ipchecker-task2
+      - ipchecker-task3
+      - ipchecker-task4
+
+  ipchecker-task1:
+    image: ipchecker-task1
+    build:
+      context: ./ipchecker-task1
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+
+  ipchecker-task2:
+    image: ipchecker-task2
+    build:
+      context: ./ipchecker-task2
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    depends_on:
+      - ipchecker-task1
+
+  ipchecker-task3:
+    image: ipchecker-task3
+    build:
+      context: ./ipchecker-task3
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    depends_on:
+      - ipchecker-task2
+
+  ipchecker-task4:
+    image: ipchecker-task4
+    build:
+      context: ./ipchecker-task4
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    depends_on:
+      - ipchecker-task3
+
+  monitor:
+    image: ipchecker-monitor
+    build:
+      context: ./monitoring-service
+      dockerfile: Dockerfile
+    depends_on:
+      - proxy
+      - ipchecker-task1
+      - ipchecker-task2
+      - ipchecker-task3
+      - ipchecker-task4
